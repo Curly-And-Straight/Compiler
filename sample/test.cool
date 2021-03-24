@@ -1,4 +1,4 @@
-class Main {
+class A {
     main():IO {
         new IO.out_string("Hello world!\n")
         };
