@@ -6,26 +6,38 @@ import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.tree.ErrorNode;
 import org.antlr.v4.runtime.tree.TerminalNode;
 
+
 public class ProgramPrinter implements CoolListener {
+
 
     @Override
     public void enterStart(CoolParser.StartContext ctx) {
-        System.out.println(ctx.getStart().getText());
+        System.out.println("program start{");
+        System.out.print("\tmain ");
     }
 
     @Override
     public void exitStart(CoolParser.StartContext ctx) {
+//        System.out.println("}");
+    }
+
+    public void getParent(CoolParser.ClassDefContext ctx){
 
     }
 
     @Override
     public void enterClassDef(CoolParser.ClassDefContext ctx) {
+        if (Compiler.isStart == false) {
+            System.out.println("class: " + ctx.TYPE(0) + "class :" +  "{");
+        }
 
     }
 
     @Override
     public void exitClassDef(CoolParser.ClassDefContext ctx) {
-
+        if (Compiler.isStart == false) {
+            System.out.print("\t}\n\t");
+        }
     }
 
     @Override
