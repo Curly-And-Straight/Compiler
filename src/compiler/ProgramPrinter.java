@@ -10,7 +10,7 @@ public class ProgramPrinter implements CoolListener {
 
     @Override
     public void enterStart(CoolParser.StartContext ctx) {
-
+        System.out.println(ctx.getStart().getText());
     }
 
     @Override
@@ -71,7 +71,6 @@ public class ProgramPrinter implements CoolListener {
     @Override
     public void enterString(CoolParser.StringContext ctx) {
 
-        System.out.println(ctx.getText());
     }
 
     @Override
