@@ -11,6 +11,7 @@ import org.antlr.v4.runtime.tree.ParseTreeWalker;
 import java.io.IOException;
 
 public class Compiler {
+    public static boolean isStart = true;
     public static void main(String[] args) throws IOException{
         CharStream stream = CharStreams.fromFileName("./sample/test.cool");
         CoolLexer lexer = new CoolLexer(stream);
@@ -21,5 +22,11 @@ public class Compiler {
         ParseTreeWalker walker = new ParseTreeWalker();
         CoolListener listener = new ProgramPrinter();
         walker.walk(listener,tree);
+        Compiler.isStart = false;
+        walker.walk(listener,tree.getChild(tree.getChildCount() - 1));
+        for (int i = 0; i < tree.getChildCount() - 1; i++) {
+            walker.walk(listener,tree.getChild(i));
+        }
+
     }
 }
