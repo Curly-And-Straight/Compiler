@@ -3,20 +3,20 @@ grammar Cool;
 program   : classDefine+ # start
           ;
 
-classDefine     : CLASS CUSTOMTYPE (INHERITS CUSTOMTYPE)? OPENBRACE (feature SEMICOLON)* CLOSEBRACE SEMICOLON # classDef
+classDefine     : CLASS TYPE (INHERITS TYPE)? OPENBRACE (feature SEMICOLON)* CLOSEBRACE SEMICOLON # classDef
           ;
-feature   : ID OPENPARENTHESES (parameter (COMMA parameter)*)? CLOSEPARENTHESES COLON CUSTOMTYPE OPENBRACE expr CLOSEBRACE # function
-          | ID COLON CUSTOMTYPE (ASSIGN expr )? # varDef
+feature   : ID OPENPARENTHESES (parameter (COMMA parameter)*)? CLOSEPARENTHESES COLON TYPE OPENBRACE expr CLOSEBRACE # function
+          | ID COLON TYPE (ASSIGN expr )? # varDef
           ;
-parameter : ID COLON CUSTOMTYPE # param;
-expr      : expr(AT CUSTOMTYPE)? DOT ID OPENPARENTHESES ( expr (COMMA expr)*)? CLOSEPARENTHESES # objectCall
+parameter : ID COLON TYPE # param;
+expr      : expr(AT TYPE)? DOT ID OPENPARENTHESES ( expr (COMMA expr)*)? CLOSEPARENTHESES # objectCall
           | ID OPENPARENTHESES ( expr (COMMA expr)*)? CLOSEPARENTHESES # staticCall
           | IF expr THEN expr ELSE expr FI # if
           | WHILE expr LOOP expr POOL # while
           | OPENBRACE (expr SEMICOLON)+ CLOSEBRACE  # block
-          | LET ID COLON CUSTOMTYPE ( ASSIGN expr )? (COMMA ID COLON CUSTOMTYPE ( ASSIGN expr )?)* IN expr # let
-          | CASE expr OF (ID COLON CUSTOMTYPE CASEASSIGN expr SEMICOLON )+ ESAC # switch
-          | NEW CUSTOMTYPE # newObject
+          | LET ID COLON TYPE ( ASSIGN expr )? (COMMA ID COLON TYPE ( ASSIGN expr )?)* IN expr # let
+          | CASE expr OF (ID COLON TYPE CASEASSIGN expr SEMICOLON )+ ESAC # switch
+          | NEW TYPE # newObject
           | ISVOID expr # void
           | expr MUL expr # mul
           | expr DIV expr # div
@@ -97,7 +97,7 @@ expr      : expr(AT CUSTOMTYPE)? DOT ID OPENPARENTHESES ( expr (COMMA expr)*)? C
  ISVOID: I S V O I D;
  ID: [a-z_][a-zA-Z0-9_]*;
  NUM: [0-9]+;
- CUSTOMTYPE: [A-Z][a-zA-Z_0-9]*;
+ TYPE: [A-Z][a-zA-Z_0-9]*;
  SINGLECOMMENT: '--' ~[\r\n]* -> skip;
  MULTICOMMENT: '(*' .*? '*)' -> skip;
  WS: [ \n\t\r]+ -> skip;
