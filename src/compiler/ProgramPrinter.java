@@ -9,50 +9,68 @@ import org.antlr.v4.runtime.tree.TerminalNode;
 
 public class ProgramPrinter implements CoolListener {
 
-
     @Override
     public void enterStart(CoolParser.StartContext ctx) {
         System.out.println("program start{");
-        System.out.print("\tmain ");
     }
 
     @Override
     public void exitStart(CoolParser.StartContext ctx) {
-//        System.out.println("}");
+        System.out.println("}");
     }
 
-    public void getParent(CoolParser.ClassDefContext ctx){
+    public String getParent(CoolParser.ClassDefContext ctx) {
+        String parent = "";
+        if(ctx.TYPE(1) == null){
+            parent =  "Object";
+        }
+        else{
+            parent = ctx.TYPE(1).getText();
+        }
 
+        return parent;
     }
 
     @Override
     public void enterClassDef(CoolParser.ClassDefContext ctx) {
-        if (Compiler.isStart == false) {
-            System.out.println("class: " + ctx.TYPE(0) + "class :" +  "{");
-        }
+
+        System.out.println("\tclass: " + ctx.TYPE(0)+ "/" + " class parents: " + getParent(ctx) + ",{");
 
     }
 
     @Override
     public void exitClassDef(CoolParser.ClassDefContext ctx) {
-        if (Compiler.isStart == false) {
-            System.out.print("\t}\n\t");
-        }
+
+        System.out.println("\t}");
+
     }
 
+    public void printParameters(CoolParser.FunctionContext ctx){
+        if(ctx.parameter().size() != 0){
+            System.out.print("(parameters_list= (");
+            for(int i = 0 ; i < ctx.parameter().size() ; i++){
+                System.out.print( ctx.parameter(i).getText() + ", ");
+            }
+            System.out.println("))");
+        }
+
+    }
     @Override
     public void enterFunction(CoolParser.FunctionContext ctx) {
+        System.out.print("\t\tclass method: " + ctx.ID() + "/" + "return " +"{"
+                + "type= " + ctx.TYPE() + "{\n\t\t\t" );
+        printParameters(ctx);
 
     }
 
     @Override
     public void exitFunction(CoolParser.FunctionContext ctx) {
-
+        System.out.println("\t\t}");
     }
 
     @Override
     public void enterVarDef(CoolParser.VarDefContext ctx) {
-
+        System.out.println("\t\tfield: " + ctx.ID() + "/ " + "type= " + ctx.TYPE());
     }
 
     @Override
