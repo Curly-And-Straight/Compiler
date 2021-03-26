@@ -8,6 +8,13 @@ import org.antlr.v4.runtime.tree.TerminalNode;
 
 
 public class ProgramPrinter implements CoolListener {
+    public static int indent = 0;
+
+    public void addIndent(int indent){
+        for(int i = 0 ; i < indent ; i++){
+            System.out.print("\t");
+        }
+    }
 
     @Override
     public void enterStart(CoolParser.StartContext ctx) {
@@ -33,58 +40,68 @@ public class ProgramPrinter implements CoolListener {
 
     @Override
     public void enterClassDef(CoolParser.ClassDefContext ctx) {
-
-        System.out.println("\tclass: " + ctx.TYPE(0)+ "/" + " class parents: " + getParent(ctx) + ",{");
-
+        addIndent(++indent);
+        System.out.println("class: " + ctx.TYPE(0)+ "/" + " class parents: " + getParent(ctx) + ",{");
     }
 
     @Override
     public void exitClassDef(CoolParser.ClassDefContext ctx) {
-
-        System.out.println("\t}");
+        addIndent(indent);
+        System.out.println("}");
+        --indent;
 
     }
 
     public void printParameters(CoolParser.FunctionContext ctx){
         if(ctx.parameter().size() != 0){
+            addIndent(++indent);
             System.out.print("(parameters_list= (");
             for(int i = 0 ; i < ctx.parameter().size() ; i++){
                 System.out.print( ctx.parameter(i).getText() + ", ");
             }
             System.out.println("))");
+
         }
 
     }
     @Override
     public void enterFunction(CoolParser.FunctionContext ctx) {
-        System.out.print("\t\tclass method: " + ctx.ID() + "/" + "return " +"{"
-                + "type= " + ctx.TYPE() + "{\n\t\t\t" );
+        addIndent(++indent);
+        System.out.print("class method: " + ctx.ID() + "/" + "return " +
+                "type= " + ctx.TYPE() + "{\n") ;
+
         printParameters(ctx);
 
     }
 
     @Override
     public void exitFunction(CoolParser.FunctionContext ctx) {
-        System.out.println("\t\t}");
+        indent =((ctx.parameter().size()!= 0) ? --indent  : indent);
+        addIndent(indent);
+        System.out.println("}");
+        indent--;
     }
 
     @Override
     public void enterVarDef(CoolParser.VarDefContext ctx) {
-        System.out.println("\t\tfield: " + ctx.ID() + "/ " + "type= " + ctx.TYPE());
+        addIndent(++indent);
+        System.out.println("field: " + ctx.ID() + "/ " + "type= " + ctx.TYPE());
     }
 
     @Override
     public void exitVarDef(CoolParser.VarDefContext ctx) {
-
+        --indent;
     }
 
     @Override
     public void enterParam(CoolParser.ParamContext ctx) {
 
+
     }
 
     @Override
     public void exitParam(CoolParser.ParamContext ctx) {
+
 
     }
 
@@ -160,22 +177,31 @@ public class ProgramPrinter implements CoolListener {
 
     @Override
     public void enterWhile(CoolParser.WhileContext ctx) {
+        addIndent(++indent);
+        System.out.println("nested statement{");
 
     }
 
     @Override
     public void exitWhile(CoolParser.WhileContext ctx) {
+        addIndent(indent);
+        System.out.println("}");
+        indent--;
 
     }
 
     @Override
     public void enterSwitch(CoolParser.SwitchContext ctx) {
+        addIndent(++indent);
+        System.out.println("nested statement{");
 
     }
 
     @Override
     public void exitSwitch(CoolParser.SwitchContext ctx) {
-
+        addIndent(indent);
+        System.out.println("}");
+        indent--;
     }
 
     @Override
@@ -220,12 +246,13 @@ public class ProgramPrinter implements CoolListener {
 
     @Override
     public void enterLet(CoolParser.LetContext ctx) {
-
+        addIndent(++indent);
+        System.out.println("field: " + ctx.ID().get(0) + "/ " + "type= " + ctx.TYPE().get(0));
     }
 
     @Override
     public void exitLet(CoolParser.LetContext ctx) {
-
+        --indent;
     }
 
     @Override
@@ -240,12 +267,15 @@ public class ProgramPrinter implements CoolListener {
 
     @Override
     public void enterIf(CoolParser.IfContext ctx) {
-
+        addIndent(++indent);
+        System.out.println("nested statement{");
     }
 
     @Override
     public void exitIf(CoolParser.IfContext ctx) {
-
+        addIndent(indent);
+        System.out.println("}");
+        indent--;
     }
 
     @Override
