@@ -3,7 +3,7 @@ grammar Cool;
 program   : classDefine+ # start
           ;
 
-classDefine     : CLASS TYPE (INHERITS TYPE)? OPENBRACE (feature SEMICOLON)* CLOSEBRACE SEMICOLON # classDef
+classDefine     : CLASS TYPE (INHERITS TYPE) OPENBRACE (feature SEMICOLON)* CLOSEBRACE SEMICOLON # classDef
           ;
 feature   : ID OPENPARENTHESES (parameter (COMMA parameter)*)? CLOSEPARENTHESES COLON TYPE OPENBRACE expr CLOSEBRACE # function
           | ID COLON TYPE (ASSIGN expr )? # varDef
