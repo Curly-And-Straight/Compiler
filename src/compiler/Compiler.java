@@ -7,7 +7,6 @@ import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.TokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
-
 import java.io.IOException;
 
 public class Compiler {
@@ -21,5 +20,8 @@ public class Compiler {
         ParseTreeWalker walker = new ParseTreeWalker();
         CoolListener listener = new ProgramPrinter();
         walker.walk(listener,tree);
+
     }
+
+
 }
