@@ -7,8 +7,13 @@ import org.antlr.v4.runtime.RuleContext;
 import org.antlr.v4.runtime.tree.ErrorNode;
 import org.antlr.v4.runtime.tree.TerminalNode;
 
+import java.util.ArrayList;
+
 
 public class ProgramPrinter implements CoolListener {
+
+    ArrayList<ArrayList<String>> tree = new ArrayList();
+
     public static int indent = 0;
 
     public void addIndent(int indent){
@@ -19,18 +24,22 @@ public class ProgramPrinter implements CoolListener {
 
     @Override
     public void enterStart(CoolParser.StartContext ctx) {
+
         System.out.println("program start{");
     }
 
     @Override
     public void exitStart(CoolParser.StartContext ctx) {
         System.out.println("}");
+        new TreeMaker(tree);
     }
 
     public String getParent(CoolParser.ClassDefContext ctx) {
         String parent = "";
+
         if(ctx.TYPE(1) == null){
             parent =  "Object";
+
         }
         else{
             parent = ctx.TYPE(1).getText();
@@ -41,8 +50,12 @@ public class ProgramPrinter implements CoolListener {
 
     @Override
     public void enterClassDef(CoolParser.ClassDefContext ctx) {
+        ArrayList<String> pair = new ArrayList<>();
+        pair.add(ctx.TYPE(0).getText());
+        pair.add(getParent(ctx));
+        tree.add(pair);
         addIndent(++indent);
-        System.out.println("class: " + ctx.TYPE(0)+ "/" + " class parents: " + getParent(ctx) + ",{");
+        System.out.println("class: " + ctx.TYPE(0) + "/" + " class parents: " + getParent(ctx) + ",{");
     }
 
     @Override
@@ -175,24 +188,27 @@ public class ProgramPrinter implements CoolListener {
     public void exitLt(CoolParser.LtContext ctx) {
 
     }
-    public boolean isNested(RuleContext ctx){
-        String parent = ctx.getChild(0).getText();
-        return (parent.contains("while") || parent.contains("if") || parent.contains("switch"))? true : false;
-    }
 
+    public boolean isNested(RuleContext ctx){
+        String grandParent = ctx.parent.getChild(0).getText();
+        String parent = ctx.getChild(0).getText();
+        return ((parent.contains("while") || parent.contains("if") || parent.contains("switch")) ||
+                (grandParent.contains("while") || grandParent.contains("if") || grandParent.contains("switch")))? true : false;
+    }
 
     @Override
     public void enterWhile(CoolParser.WhileContext ctx) {
-        RuleContext context = ctx.parent.parent;
+        RuleContext context = ctx.parent;
         if(isNested(context)) {
             addIndent(++indent);
             System.out.println("nested statement{");
         }
+
     }
 
     @Override
     public void exitWhile(CoolParser.WhileContext ctx) {
-        RuleContext context = ctx.parent.parent;
+        RuleContext context = ctx.parent;
         if(isNested(context)) {
             addIndent(indent);
             System.out.println("}");
@@ -203,7 +219,7 @@ public class ProgramPrinter implements CoolListener {
 
     @Override
     public void enterSwitch(CoolParser.SwitchContext ctx) {
-        RuleContext context = ctx.parent.parent;
+        RuleContext context = ctx.parent;
         if(isNested(context)) {
             addIndent(++indent);
             System.out.println("nested statement{");
@@ -213,7 +229,7 @@ public class ProgramPrinter implements CoolListener {
 
     @Override
     public void exitSwitch(CoolParser.SwitchContext ctx) {
-        RuleContext context = ctx.parent.parent;
+        RuleContext context = ctx.parent;
         if(isNested(context)) {
             addIndent(indent);
             System.out.println("}");
@@ -269,7 +285,7 @@ public class ProgramPrinter implements CoolListener {
 
     @Override
     public void exitLet(CoolParser.LetContext ctx) {
-        --indent;
+        indent--;
     }
 
     @Override
@@ -284,18 +300,17 @@ public class ProgramPrinter implements CoolListener {
 
     @Override
     public void enterIf(CoolParser.IfContext ctx) {
-        RuleContext context = ctx.parent.parent;
+        RuleContext context = ctx.parent;
         if(isNested(context)) {
             addIndent(++indent);
             System.out.println("nested statement{");
-            RuleContext parent;
-            parent = ctx.parent.parent;
         }
+
     }
 
     @Override
     public void exitIf(CoolParser.IfContext ctx) {
-        RuleContext context = ctx.parent.parent;
+        RuleContext context = ctx.parent;
         if(isNested(context)) {
             addIndent(indent);
             System.out.println("}");
@@ -412,4 +427,6 @@ public class ProgramPrinter implements CoolListener {
     public void exitEveryRule(ParserRuleContext parserRuleContext) {
 
     }
+
+
 }
