@@ -5,10 +5,10 @@ class A {
 
     {
         {
-            var<-num;
-            self;
-        }
-    }
+                 var<-num;
+                 self;
+             }
+         }
 
     ;
 
